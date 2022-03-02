@@ -1,0 +1,91 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="ModeSManager\ModeS\ADSBAirbornePosition.cpp">
+      <Filter>ModeSManager\ModeS</Filter>
+    </ClCompile>
+    <ClCompile Include="ModeSManager\ModeS\ADSBAirborneVelocity.cpp">
+      <Filter>ModeSManager\ModeS</Filter>
+    </ClCompile>
+    <ClCompile Include="ModeSManager\ModeS\ADSBIdentification.cpp">
+      <Filter>ModeSManager\ModeS</Filter>
+    </ClCompile>
+    <ClCompile Include="ModeSManager\ModeS\ADSBSurfacePosition.cpp">
+      <Filter>ModeSManager\ModeS</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\mainwindow.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="ModeSManager\ModeS\ModeSInfo.cpp">
+      <Filter>ModeSManager\ModeS</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="ModeSManager\ModeSManager.cpp">
+      <Filter>ModeSManager</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="ModeSManager\ModeS\ADSBAirbornePosition.h">
+      <Filter>ModeSManager\ModeS</Filter>
+    </ClInclude>
+    <ClInclude Include="ModeSManager\ModeS\ADSBAirborneVelocity.h">
+      <Filter>ModeSManager\ModeS</Filter>
+    </ClInclude>
+    <ClInclude Include="ModeSManager\ModeS\ADSBIdentification.h">
+      <Filter>ModeSManager\ModeS</Filter>
+    </ClInclude>
+    <ClInclude Include="ModeSManager\ModeS\ADSBSurfacePosition.h">
+      <Filter>ModeSManager\ModeS</Filter>
+    </ClInclude>
+    <ClInclude Include="ModeSManager\ModeS\ModeSInfo.h">
+      <Filter>ModeSManager\ModeS</Filter>
+    </ClInclude>
+    <ClInclude Include="ModeSManager\ModeS\ModeS.h">
+      <Filter>ModeSManager\ModeS</Filter>
+    </ClInclude>
+    <ClInclude Include="ModeSManager\ModeSManager.h">
+      <Filter>ModeSManager</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="UI">
+      <UniqueIdentifier>{0a0800d1-75d6-4e99-8720-cb5884f2c01d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ModeSManager">
+      <UniqueIdentifier>{d3ab9fcf-0ddc-43b1-bf1e-c83e26ffa62a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ModeSManager\ModeS">
+      <UniqueIdentifier>{6e615452-964b-4755-8d60-bd381f393ae8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource">
+      <UniqueIdentifier>{c8e2befa-4443-46de-95e3-4cd19cd561ca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource\Map">
+      <UniqueIdentifier>{cec7758c-ac5c-4554-a958-8c84e9f8f147}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <QtMoc Include="UI\mainwindow.h">
+      <Filter>UI</Filter>
+    </QtMoc>
+  </ItemGroup>
+  <ItemGroup>
+    <QtUic Include="UI\mainwindow.ui">
+      <Filter>UI</Filter>
+    </QtUic>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ADS-B.pro" />
+    <None Include="Resource\Map\QWebChannel.js">
+      <Filter>Resource\Map</Filter>
+    </None>
+    <None Include="Resource\Map\Map.html">
+      <Filter>Resource\Map</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <QtRcc Include="Resource\Map.qrc">
+      <Filter>Resource</Filter>
+    </QtRcc>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,116 @@
+﻿<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+	<style type="text/css">
+		body, html, #allmap {
+			width: 100%;
+			height: 100%;
+			overflow: hidden;
+			margin: 0;
+			font-family: "微软雅黑";
+		}
+	</style>
+	<title>地图展示</title>
+</head>
+<body>
+	<div id="allmap"></div>
+</body>
+</html>
+
+<script src="https://webapi.amap.com/maps?v=1.4.15&key=d8410fb7323ddcdd38178b7569525b0a"></script>
+
+<script src="QWebChannel.js"></script>
+
+<script type="text/javascript">
+
+	qt_available  = null;
+	try
+	{
+		new QWebChannel(qt.webChannelTransport, function(channel){window.bridge = channel.objects.web_channel;});
+	} catch (e)
+	{
+		console.log("需要运行在Qt环境中");
+		qt_available = false;
+	} finally 
+	{
+		if (qt_available == null)
+			qt_available = true;
+	}
+
+	var map = new AMap.Map("allmap", {center : [118.87027, 31.73403]});
+	if (qt_available)
+		map.on("mousemove",
+	 		function(e)
+			{
+				var pixel = map.geodeticCoordToLngLat(e.pixel);
+				window.bridge.setLabelMousePosition(pixel.lat, pixel.lng);
+			}
+		);
+
+	var ICAO_point = {};
+	var ICAO_passing = {};
+	var ICAO_passed = {};
+	var ICAO_time = {};
+	var ICAO_marker = {};
+	var ICAO_ismoving = {};
+	
+	function AddPoint(ICAO, lat, lng, time)
+	{
+		lat = parseFloat(lat);
+		lng = parseFloat(lng);
+		time = parseInt(time);
+		if (!(ICAO in ICAO_marker))
+		{
+			ICAO_point[ICAO] = [];
+			ICAO_passed[ICAO] = [];
+			ICAO_time[ICAO] = [];
+			ICAO_ismoving[ICAO] = false;
+
+			var marker = new AMap.Marker({
+				position: [lng, lat],
+				icon: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAMAAABg3Am1AAADAFBMVEX///9HR0dhYWFTU1NJSUlDQ0NCQkJDQ0NCQkJDQ0NAQEBDQ0NCQkI/Pz9BQUE/Pz9ERERAQEBDQ0NERERCQkJERERAQEA/Pz9GRkZFRUVERERDQ0NCQkJaWlpOTk5ERERCQkJERERBQUFcXFxYWFhBQUFCQkJAQEBDQ0NWVlZFRUVCQkJVVVVCQkJERERAQEBFRUVTU1NCQkJDQ0M/Pz89PT1ERERBQUE8PDw7OzteXl5DQ0NBQUFFRUWAgIBDQ0NJSUlERERNTU1CQkJAQEBPT09EREQ/Pz9CQkJDQ0NCQkJFRUVFRUVFRUWAgIB4eHhAQEBra2t/f39+fn5ycnJubm5paWlvb299fX1qamp5eXl2dnZwcHBtbW10dHRfX198fHwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABgEoxjAAABAHRSTlMA9Pv0B/cfuoDlSOZ/UflJHiD1xvbaRFX08+X2/Pjxu4O5+/n2T/t7JvXTdPT3zWwa8/jfZRW+XhEN/GeB9gKd9bX1hyzx9YXy5OP0xfX/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////ROoFtwAAATxJREFUSImllmdTwkAQhilGsSFg7wgqKvbeCzZsbw4CCvb//ytMm0kciO6r+3Fvnsk9l73dC4X+E3txpVQ8SRDbdSDSRgA7a4AR7pEDu+s1oNrZIid6SwCiMTmwuWgCel+rGNhaMsB5L7+B816ZNwHGe1Urg/NeeLIAPSX2zk9bAOGdHLX3ZIQ7pET/q/2JarvUOzduA4h2NV+/Niv67NiXmHtwgCDv7gkYhRN/ZqPiEJGppkBCAz5PD32ZdNYBgryLOvB8dOAlLoYdIMjbrugXbcbLjLzjJ+/zfWutMqu8+HABfUx9i8zkoGV9CWnUHocGTOsrMQCUbljg9g9boqXv2WNlfxxdGnTxNZb3nWssvda/XaCGYK8o3QToNuM2MnEDp1sl3YzZdk8PFHpksUORHrv0YGefDvzjRBBfTk6ydfR6ng4AAAAASUVORK5CYII=",
+				autoRotation: true,
+				offset: new AMap.Pixel(-24, -24),
+				extData: ICAO
+			});
+			marker.setMap(map);
+			marker.on("moving",
+				function(e)
+				{
+					ICAO_passing[ICAO].setPath(e.passedPath);
+				}
+			);
+			marker.on("moveend",
+			function(e)
+				{
+					ICAO_passed[ICAO].push(ICAO_passing[ICAO]);
+					ICAO_ismoving[ICAO] = false;
+					ICAO_point[ICAO].shift(); ICAO_time[ICAO].shift();
+					startmove(ICAO);
+				}
+			);
+			ICAO_marker[ICAO] = marker;
+		}
+		ICAO_point[ICAO].push([lng, lat]);
+		ICAO_time[ICAO].push(time);
+
+		startmove(ICAO);
+	}
+
+	function startmove(ICAO)
+	{
+		if(!ICAO_ismoving[ICAO] && ICAO_point[ICAO].length >= 2)
+		{
+			// p0 是当前点, p1是要移动到的点
+			var p0 = ICAO_point[ICAO][0]; var t0 = ICAO_time[ICAO][0];
+			var p1 = ICAO_point[ICAO][1]; var t1 = ICAO_time[ICAO][1];
+			ICAO_ismoving[ICAO] = true;
+			ICAO_passing[ICAO] = new AMap.Polyline({map : map, strokeColor : "black", strokeWeight : 2});
+			var speed = AMap.GeometryUtil.distance(p0, p1) / (t1 - t0) * 3600;
+			ICAO_marker[ICAO].moveTo(p1, AMap.GeometryUtil.distance(p0, p1) / (t1 - t0) * 3600);
+		}
+	}
+	
+</script>
+
